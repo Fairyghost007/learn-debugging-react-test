@@ -2,6 +2,124 @@
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/kamranayub/pluralsight-course-react-debugging)
 
+# README - Explication des Corrections
+
+## 1. Explication des Corrections
+
+### Valeurs par défaut des propriétés :
+- Des valeurs par défaut ont été définies pour `inventoryCount`, `rating`, `reviewCount`, et `popularity` dans le composant `UnseenUmbrellaMoth` afin de gérer les cas où ces propriétés sont `null` ou `undefined`.
+
+### Validation des types de propriétés (`PropTypes`) :
+- Des validations de types ont été ajoutées à chaque composant pour garantir que les données passées respectent les types attendus.
+
+---
+
+## 2. Explication des Corrections
+
+### Gestion de l'état dans `LikeButton` :
+- Utilisation de `useState` pour gérer les changements de `likeValue`, car React nécessite une gestion d'état pour que le rendu soit correct après les modifications.
+
+### Mise à jour des attributs immuables :
+- Création de l'état `currentAttributes` recalculé en fonction du niveau, ce qui permet de conserver les propriétés passées sans modification, respectant ainsi le principe d'immuabilité de React.
+
+### Dépendances dans `useEffect` :
+- Ajout de `level` comme dépendance dans le hook `useEffect` pour recalculer `currentAttributes` à chaque changement de niveau, garantissant ainsi une réinitialisation correcte des attributs au niveau 1.
+
+---
+
+## 4. Explication des Corrections
+
+### Initialisation et mise à jour de l'état :
+
+- **Correction de `useState` :** Dans le composant `ShySpider`, l'état `purchaseLevel` est désormais correctement initialisé avec `useState(props.level)`. Le niveau est mis à jour dans le composant parent à chaque changement dans le composant enfant (`BugAttributes`).
+  
+- **État dans `BugAttributes` :** L'état `currentLevel` dans `BugAttributes` est initialisé avec `useState(initialLevel)` et mis à jour correctement avec `setCurrentLevel`, ce qui évite les changements d'état imprévus.
+
+### Gestion des mises à jour de l'état :
+
+- **Gestion du niveau :** Le niveau est mis à jour via `setCurrentLevel`, et les modifications sont propagées vers le parent avec `onLevelChange`, assurant la synchronisation entre le parent et l'enfant.
+
+- **Propagation de l'état :** Le `purchaseLevel` est passé à `BugAttributes` depuis `ShySpider` et toute modification dans `BugAttributes` est renvoyée vers le parent.
+
+### Interaction avec les boutons :
+
+- **Logique d'augmentation et de diminution du niveau :** Les fonctions `onLevelUp` et `onLevelDown` gèrent maintenant correctement les changements de `currentLevel` en utilisant `setCurrentLevel`, garantissant que l'UI se met à jour correctement.
+
+### Résumé de l'achat :
+
+- Le composant `PurchaseSummary` affiche correctement le niveau à partir de `purchaseLevel` passé en tant que propriété. Le rendu est conditionnel en fonction de la présence d'un `purchaseLevel` valide.
+
+---
+
+## 5. Explication
+
+### Fonction de suivi débouncée :
+- Utilisation d'une version débouncée de la fonction `track` pour limiter la fréquence d'envoi des événements d'analyse, afin d'éviter de surcharger le système.
+
+### Test amélioré :
+- Le test vérifie désormais que le nombre d'événements est strictement supérieur à 0 et inférieur à 6, garantissant que les événements sont envoyés de manière contrôlée sans excès.
+
+---
+
+## 6. Explications
+
+### Gestion de l'état pour le mode strict :
+- L'état `isStrictMode` suit l'activation du mode strict et est passé à `MountCounter` pour loguer les messages de montage conditionnellement.
+
+### Journalisation conditionnelle dans `MountCounter` :
+- Le `console.log` dans `MountCounter` vérifie la propriété `isStrictMode`. Si le mode strict est activé, le message de montage est logué, sinon il est ignoré.
+
+### Dépendances d'effet :
+- Le `useEffect` dans `MountCounter` a été mis à jour pour inclure `isStrictMode` dans ses dépendances, permettant de prendre en compte les changements dans le mode strict.
+
+---
+
+## 7. Explications
+
+### Test de la quantité :
+- Le test dans `useBugTest` vérifie que la quantité peut être mise à jour à 10. L'utilisateur peut cliquer sur le bouton "+" pour atteindre une quantité de 10.
+
+### Calcul du prix :
+- La fonction `recalculatePrice` utilise `parseCurrencyAsAmount` pour convertir correctement le prix et calculer le total en fonction de la quantité.
+
+### Boucle coûteuse évitée :
+- L'ancienne implémentation utilisait une boucle coûteuse dans `parseCurrencyAsAmount`, ce qui a été supprimé pour améliorer les performances et éviter les effets de "rendu retardé".
+
+### Mise à jour de l'état :
+- La fonction `setQuantity` gère correctement l'augmentation ou la diminution de la quantité tout en respectant les limites (1 à 100) définies par les propriétés des boutons.
+
+---
+
+## 8. Explications
+
+### Logique de limite de quantité :
+- Utilisation de `Math.max(1, quantity - 1)` et `Math.min(100, quantity + 1)` pour garantir que la quantité ne dépasse pas 100 ni ne descende en dessous de 1, indépendamment des interactions utilisateur.
+
+### Logique de remise sur volume :
+- Le composant `VolumeDiscount` est rendu conditionnellement selon le résultat de la fonction `isVolumeDiscount(quantity)` qui détermine si la remise s'applique.
+
+### Tests :
+- Le test dans `useBugTest` vérifie que la quantité peut être augmentée jusqu'à 50. L'utilisateur peut cliquer sur le bouton "+" pour atteindre cette quantité.
+
+### Formatage et analyse :
+- La fonction `parseCurrencyAsAmount` assure un arrondi correct des montants, améliorant ainsi la précision des calculs.
+
+---
+
+## 9. Fonction `refetch()` débouncée
+
+### Hook `useDebouncedRefetch` :
+- Le hook `useDebouncedRefetch` est utilisé pour appeler `refetch()` avec un délai de 300ms lors du changement de quantité, évitant ainsi des appels réseau inutiles.
+
+### Utilisation de `useCallback` et `useRef` :
+- Cette combinaison garantit que la fonction débouncée reste stable entre les re-rendus, améliorant ainsi les performances.
+
+### Rendu conditionnel du sélecteur de quantité :
+- Le `QuantityPicker` ne se rend que lorsque la propriété `show` est vraie, minimisant ainsi les rendus inutiles et les appels `refetch` trop fréquents.
+
+
+
+
 The fastest way to jump into the demo experience and solve the challenges is by running in the GitHub Codespace which is a preconfigured development environment with everything you need to follow along with the course.
 
 Once you're in, simply run:
